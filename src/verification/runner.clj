@@ -1,24 +1,38 @@
-(ns verification.main
+(ns verification.runner
   (:use [labrepl.lab :only (instructions)]
 	net.cgrand.enlive-html
-	[clojure.string :only (trim)])
+	[clojure.string :only (trim split-lines join)])
   (:require [hiccup.core :as hc])
   (:import (java.io ByteArrayInputStream)))
 
 (defn code-map* [lines]
+  {:post [(string? (:code %))
+	  (or (string? (:result %)) (nil? (:result %)))]}
   (let [has-result (re-find #"^->" (last lines))
-	code (if has-result (drop-last lines) lines)
+	code (join "\n" (if has-result (drop-last lines) lines))
 	result (when has-result (-> lines last (subs 2) trim))]
     {:code code, :result result}))
 
 (defn code-map [node]
+  {:post [(map? %)]}
   (let [cdata (-> node :content first trim)
 	code (subs cdata 9 (- (count cdata) 3))
 	lines (split-lines code)]
     (code-map* lines)))
 
 (defn run-code [code-seq]
-  ())
+  (let [cur (first code-seq)
+	code (:code cur)
+	res  (:result cur)
+	eres (eval (read-string code))]
+    (println "Running:\n" code)
+    (when res
+      (println "-> " eres)
+      (if (= (read-string res) eres)
+	(println "Correct!\n")
+	(println "Incorrect! Should be: " res)))
+    (when-let [rem (next code-seq)]
+      (recur rem))))
 
 (defn- str->istream [str]
   (ByteArrayInputStream. (.getBytes str)))
