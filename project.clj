@@ -12,6 +12,7 @@
                  [clojure-http-client "1.0.0-SNAPSHOT"]
                  [swank-clojure "1.2.0"]
                  [jline "0.9.94"]
-                 [circumspec "0.0.13"]]
+                 [circumspec "0.0.13"]
+		 [enlive "1.0.0-SNAPSHOT"]]
   :dev-dependencies [[autodoc "0.7.0"]]
   :repositories {"clojure-releases" "http://build.clojure.org/releases"})
