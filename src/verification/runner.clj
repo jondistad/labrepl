@@ -28,9 +28,11 @@
     (println "Running:\n" code)
     (when res
       (println "-> " eres)
-      (if (= (read-string res) eres)
-	(println "Correct!\n")
+      (if (or (= (read-string res) eres)
+	      (= (eval (read-string res)) eres))
+	(println "Correct!")
 	(println "Incorrect! Should be: " res)))
+    (println)
     (when-let [rem (next code-seq)]
       (recur rem))))
 
